@@ -84,18 +84,20 @@ input[type=checkbox] {
 	width: 33%;
 	float: right;
 }
- 
+
+
 #userColCode {
 	width: 49%;
 	float: left; 
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
 
 #cellColCode {
-	color: grey;
-	border-radius: 14px;
-	background: #fff1;
+	width: 49%;
+	float: right; 
 	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 
