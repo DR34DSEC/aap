@@ -1912,7 +1912,7 @@ exampleNick2
             }
             else {
                 userColCodeVal = "";
-            
+            }
 			
 			if(cellColCodeVal.startsWith('&')) {
                 cellColCodeVal = convertColCode(userColCode.value);
