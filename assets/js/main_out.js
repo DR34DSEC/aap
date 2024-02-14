@@ -1832,6 +1832,8 @@ exampleNick2
         chatBox = byId('chat_textbox');
         soundsVolume = byId('soundsVolume');
         mainCanvas.focus();
+		
+		settings.gamemode = "agar.emupedia.net:443/ws2/"; // This should be the auto-gamemode for now.
         
         let bgColorInput = byId('bgColor');
         let cellMinInput = byId('cellMinPoints');
