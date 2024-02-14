@@ -79,6 +79,18 @@
             if (knownColorFills.get(i) !== stamp) knownColorFills.delete(i);
         }
     });
+	
+	const knownCellFills = new Map();
+    fetch('cellColors.txt').then(resp => resp.text()).then(data => {
+        const skins = data.split(',').filter(name => name.length > 0);
+        if (skins.length === 0) return;
+        byId('gallery-btn').style.display = 'inline-block';
+        const stamp = Date.now();
+        for (const skin of skins) knownCellFills.set(skin, stamp);
+        for (const i of knownCellFills.keys()) {
+            if (knownCellFills.get(i) !== stamp) knownCellFills.delete(i);
+        }
+    });
     
     
     function checkColCode(colCode) {
@@ -89,6 +101,18 @@
             console.log(colCode, colCodes[0])
         */
         if (colCodes.includes(colCode)) {
+            return true
+        }
+        
+        else {
+            return false
+        }
+    }
+	
+	function checkCellColCode(cellCode) {
+        const colCodes = Array.from(knownCellFills.keys()).sort();
+        if (cellCode === 'undefined') return false 
+        if (colCodes.includes(cellCode)) {
             return true
         }
         
@@ -566,6 +590,7 @@
 
                 let name = Cell.parseName(rawName).name || EMPTY_NAME;
                 name = name.split('$')[0];
+				name = name.split('&')[0];
 
                 if (flags.server && name !== 'SERVER') name = `[SERVER] ${name}`;
                 if (flags.admin) name = `[ADMIN] ${name}`;
@@ -709,6 +734,7 @@
     let chatBox = null;
     let mapCenterSet = false;
     let minionControlled = false;
+	let spectat = false;
     let mouseX = NaN;
     let mouseY = NaN;
     let macroIntervalID;
@@ -1546,6 +1572,12 @@ exampleNick2
                 ctx.fillStyle = '#9e23e3';
                 this.setColor(new Color(0, 0, 0));
             }
+			if (this.name.includes('&') && checkColCode(convertColCode('&' + this.name.split('&')[1]))) {
+              console.log('#' + this.name.split('&')[1].split('-')[1])
+              ctx.strokeStyle = '#' + this.name.split('&')[1].split('-')[1];
+			  ctx.fillStyle = '#' + this.name.split('&')[1].split('-')[1];
+			  this.setColor(new Color(255,255, 255));
+            }
             
             ctx.lineWidth = Math.max(~~(this.s / 50), 10);
             if (this.s > 20) {
@@ -1869,7 +1901,8 @@ exampleNick2
         byId('play-btn').addEventListener('click', () => {
             var userColCode = byId('userColCode');
             let userColCodeVal  = userColCode.value;
-            console.log(checkColCode(convertColCode(convertColCode(userColCode.value))))
+			let cellColCodeVal  = cellColCode.value;
+           // console.log(checkColCode(convertColCode(convertColCode(userColCode.value))))
             /*if (checkColCode(convertColCode(convertColCode(userColCode.value)))) {
                 userColCodeVal  = convertColCode(userColCode.value);
             }*/
@@ -1879,6 +1912,13 @@ exampleNick2
             }
             else {
                 userColCodeVal = "";
+            
+			
+			if(cellColCodeVal.startsWith('&')) {
+                cellColCodeVal = convertColCode(userColCode.value);
+            }
+            else {
+                cellColCodeVal = "";
             }
             
             settings.bgColor = bgColorInput.value
@@ -1908,7 +1948,7 @@ exampleNick2
             sendResponse(settings.nick, settings.nickList, ":fast_forward: :white_check_mark:")
             var skin = settings.skin;
             if (skin.charAt(0) === String.fromCharCode(36)) skin = hideBorder(skin)
-            sendPlay((skin ? `<${skin}>` : '') + settings.nick + userColCodeVal);
+            sendPlay((skin ? `<${skin}>` : '') + settings.nick + userColCodeVal + cellColCodeVal);
             hideESCOverlay();
             storeSettings();
         });
